@@ -36,3 +36,4 @@ export { usePackages } from '../composables/usePackages';
 export { initApiClient, getApiClient } from '../utils/api';
 export { useAuthStore } from '../stores/auth.store';
 export { defineStore, acceptHMRUpdate, usePinia, storeToRefs } from '../node_modules/@pinia/nuxt/dist/runtime/composables';
+export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';
