@@ -46,12 +46,7 @@ func Connect(cfg *config.Config) (*Resources, error) {
 		return nil, fmt.Errorf("connect main db: %w", err)
 	}
 
-	sub, err := connectWithRetry(cfg.MongoURISub, cfg.MongoNameSub)
-	if err != nil {
-		return nil, fmt.Errorf("connect sub db: %w", err)
-	}
-
-	return &Resources{Main: main, Sub: sub}, nil
+	return &Resources{Main: main}, nil
 }
 
 func connectWithRetry(uri, dbName string) (*Resource, error) {
