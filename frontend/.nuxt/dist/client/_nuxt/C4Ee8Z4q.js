@@ -1,0 +1,1 @@
+import{D as o,n as a}from"./D4alpo1W.js";const r=o(()=>{const t=localStorage.getItem("auth_token"),e=localStorage.getItem("auth_role");if(!t||e!=="admin")return a("/admin/login")});export{r as default};

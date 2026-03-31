@@ -1,0 +1,92 @@
+<script setup lang="ts">
+import { authService } from '~/services/auth.service'
+import { useAuthStore } from '~/stores/auth.store'
+
+definePageMeta({ layout: 'auth' })
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const form = reactive({ email: '', password: '' })
+const loading = ref(false)
+const error = ref<string | null>(null)
+
+const handleSubmit = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    const result = await authService.login(form)
+    authStore.setAuth(result)
+    router.push('/dashboard')
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Login failed'
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  if (authStore.token) router.replace('/dashboard')
+})
+</script>
+
+<template>
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+    <h2 class="text-xl font-bold text-white mb-1">Welcome back</h2>
+    <p class="text-slate-400 text-sm mb-6">Sign in to your account</p>
+
+    <div
+      v-if="error"
+      class="mb-4 px-4 py-3 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-400 text-sm"
+    >
+      {{ error }}
+    </div>
+
+    <form class="space-y-4" @submit.prevent="handleSubmit">
+      <div>
+        <label class="block text-slate-300 text-sm font-medium mb-1.5">Email</label>
+        <input
+          v-model="form.email"
+          type="email"
+          required
+          placeholder="you@example.com"
+          class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+        />
+      </div>
+      <div>
+        <label class="block text-slate-300 text-sm font-medium mb-1.5">Password</label>
+        <input
+          v-model="form.password"
+          type="password"
+          required
+          placeholder="••••••••"
+          class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+        />
+      </div>
+      <button
+        type="submit"
+        :disabled="loading"
+        class="w-full bg-primary-600 hover:bg-primary-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-lg transition-colors text-sm"
+      >
+        <span v-if="loading" class="flex items-center justify-center gap-2">
+          <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          Signing in...
+        </span>
+        <span v-else>Sign in</span>
+      </button>
+    </form>
+
+    <p class="text-slate-400 text-sm text-center mt-6">
+      No account?
+      <NuxtLink to="/register" class="text-primary-400 hover:text-primary-300 font-medium transition-colors">
+        Register here
+      </NuxtLink>
+    </p>
+    <p class="text-slate-500 text-xs text-center mt-2">
+      Admin?
+      <NuxtLink to="/admin/login" class="text-slate-400 hover:text-slate-300 transition-colors">
+        Go to admin login
+      </NuxtLink>
+    </p>
+  </div>
+</template>
