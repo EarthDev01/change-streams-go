@@ -1,7 +1,6 @@
 package stream
 
 import (
-	"changestreams/controller"
 	"changestreams/db"
 	"net/http"
 	"time"
@@ -26,10 +25,12 @@ func StartServer() {
 	}
 
 	if resources != nil {
-		// go controller.WatchCollection(resources)
-		go controller.WatchDatabase(resources["main"].DB)
 	}
 
+	router := r.Group("/api")
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "OK"})
+	})
 	r.Run("0.0.0.0:8888")
 }
 
